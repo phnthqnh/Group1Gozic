@@ -1,0 +1,25 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+venv/
+ENV/
+quynh/
+
+# Env files and secrets
+*.env
+.env*
+.DS_Store
+Thumbs.db
+
+# Database (PostgreSQL/SQLite)
+*.db
+*.dump
+*.pgsql
+*.psql
+*.sql
+*.sqlite3
+db.sqlite3
