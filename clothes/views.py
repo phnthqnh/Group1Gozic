@@ -17,9 +17,9 @@ from django.contrib import messages
 def login_view(request):
     form = LoginForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
-        username = form.cleaned_data['username']
+        phone = form.cleaned_data['user_phone']
         password = form.cleaned_data['password']
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request,phone=phone,password=password)
         if user is not None:
             login(request, user)
             return redirect('home')  
@@ -82,3 +82,25 @@ class RegisterAPI(APIView):
             return Response({"message": "Đăng ký thành công"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class LoginAPI(APIView):
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(request_body=LoginSerializer)
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            phone = serializer.validated_data['user_phone']
+            password = serializer.validated_data['password']
+            user = authenticate(request, phone=phone, password=password)
+            if user is not None:
+               
+                return Response({
+                    "message": "Đăng nhập thành công",
+                    "user": {
+                        "id": user.id,
+                        "name": user.name,
+                        "phone": user.phone
+                    }
+                }, status=status.HTTP_200_OK)
+            return Response({"error": "Tài khoản hoặc mật khẩu không đúng."}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

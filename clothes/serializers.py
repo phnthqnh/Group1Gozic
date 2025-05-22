@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth import authenticate
 from .models import *
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -33,3 +34,26 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)  # Hash mật khẩu
         user.save()
         return user
+
+class LoginSerializer(serializers.Serializer):
+    user_phone = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        phone = data.get('user_phone')
+        password = data.get('password')
+
+        if not phone:
+            raise serializers.ValidationError("Số điện thoại không được để trống.")
+        if not password:
+            raise serializers.ValidationError("Mật khẩu không được để trống.")
+
+        user = authenticate(request=self.context.get('request'), phone=phone, password=password)
+        if user is None:
+            raise serializers.ValidationError("Số điện thoại hoặc mật khẩu không đúng.")
+        
+        data['user'] = user
+        return data
+
+    def create(self, validated_data):
+        return validated_data['user']
