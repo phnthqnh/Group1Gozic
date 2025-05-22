@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .controllers.product_controller import ProductListAPIView, ProductDetailAPIView
 from .controllers.category_controller import CategoryListAPIView, CategoryDetailAPIView
 from . import views
@@ -13,3 +14,16 @@ urlpatterns = [
     path('api/categories/', CategoryListAPIView.as_view(), name='api_category_list'),
     path('api/categories/<int:pk>/', CategoryDetailAPIView.as_view(), name='api_category_detail'),
 ]
+
+from clothes.views import *
+
+urlpatterns = [
+
+    path('login/', login_view, name='login'),
+    path('account/',account_view,name='account'),
+    path('register/phone/', register_phone_view, name='register_phone'),
+    path('register/info/', register_info_view, name='register_info'),
+
+    path('api/register/', RegisterAPI.as_view(), name='api_register'),
+]
+

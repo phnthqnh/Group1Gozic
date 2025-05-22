@@ -17,3 +17,39 @@ class ProductSerializer(serializers.ModelSerializer):
         
 
     
+
+from .models import *
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only = True )
+    confirm_password = serializers.CharField(write_only = True)
+    class Meta:
+        model = User
+        fields = ['phone', 'name', 'address', 'password', 'confirm_password']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'confirm_password': {'write_only': True},
+        }
+    
+    def validate(self, data):
+        if not data['phone']:
+            raise serializers.ValidationError("Số điện thoại không được để trống.")
+        if not data['address']:
+            raise serializers.ValidationError("Địa chỉ không được để trống.")
+        if not data['name']:
+            raise serializers.ValidationError("Tên không được để trống.")
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError("Mật khẩu xác nhận không khớp.")
+        
+        if User.objects.filter(phone=data['phone']).exists():
+            raise serializers.ValidationError("Số điện thoại đã tồn tại.")
+        return data
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        validated_data.pop('confirm_password')
+        user = User(**validated_data)
+        user.set_password(password)  # Hash mật khẩu
+        user.save()
+        return user
+

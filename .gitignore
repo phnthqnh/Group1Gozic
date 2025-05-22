@@ -8,7 +8,7 @@ env/
 venv/
 ENV/
 quynh/
-
+cl_env/
 # Env files and secrets
 *.env
 .env*

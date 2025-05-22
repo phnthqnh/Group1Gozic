@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .logo span {
+            color: orange;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: auto;
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-button {
+            background: linear-gradient(to right, #FFA500, #FFFF00);
+            border: none;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+        .footer-links {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .footer-links a {
+            color: #1e90ff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 style="color: orange;">ĐĂNG NHẬP</h2>
+        <p>Chào mừng bạn trở lại</p>
+        <div class="logo"><span>G</span>ozic</div>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.username }}
+            {{ form.password }}
+            <button type="submit" class="login-button">ĐĂNG NHẬP</button>
+        </form>
+
+        <div class="footer-links">
+            <a href=>Quên mật khẩu?</a>
+            <a href=>Đăng ký</a>
+        </div>
+    </div>
+</body>
+</html>
