@@ -3,6 +3,16 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .form import LoginForm
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import *
+from .serializers import *
+from .services import auth_service
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import AllowAny
+from django.contrib import messages
+
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -20,17 +30,6 @@ def login_view(request):
 @login_required
 def account_view(request):
     return render(request, 'accounts.html',{'user':request.user})
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import *
-from .serializers import *
-from .services import auth_service
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import AllowAny
-from django.contrib import messages
 
 
 def register_phone_view(request):
