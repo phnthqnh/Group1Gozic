@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'clothes',
     'rest_framework',
     'drf_yasg',
+
 ]
 
 AUTH_USER_MODEL = 'clothes.User'
