@@ -6,19 +6,19 @@
   <title>Tài khoản</title>
 </head>
 <body>
-  <div style="background-color: red; color: white; padding: 10px;">
-    <h2>Tài khoản</h2>
-  </div>
-
   <div style="padding: 20px;">
     <div style="display: flex; align-items: center;">
       <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="50" height="50" alt="avatar">
       <div style="margin-left: 10px;">
-        <strong>{{ user.username }}</strong><br>
-        <span style="color: gray;">⭐ Thành viên</span>
+        {% if user.is_authenticated %}
+            <div><strong>{{ user.name }}</strong><br></div>
+            <div><span style="color: gray;">⭐ Thành viên</span></div>
+        {% else %}
+            <div><a href="{% url 'login' %}" style="color: black; text-decoration: none; font-weight: bold;">Chưa đăng nhập</a></div>
+            <div><span style="color: gray;">⭐ Dùng thử</span></div>
+        {% endif %}
       </div>
     </div>
-
     <hr>
 
     <p>Điểm tích lũy: <span style="color: red;">0 điểm</span></p>
@@ -34,6 +34,11 @@
     <hr>
     <h3>Đơn hàng</h3>
     <p>Quản lý đơn hàng</p>
+    <hr>
+    <p><a href="{% url 'home' %}" style="color: orange;">Trang chủ</a></p>
+    {% if user.is_authenticated %}
+    <p><a href="{% url 'logout' %}" style="color: red;">Đăng xuất</a></p>
+    {% endif %}
   </div>
 </body>
 </html>
