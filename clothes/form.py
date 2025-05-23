@@ -1,7 +1,7 @@
 from django import forms
 
 class LoginForm(forms.Form):
-    username = forms.CharField(
+    user_phone = forms.CharField(
         label='Nhập số điện thoại hoặc email',
         widget=forms.TextInput(attrs={
             'placeholder': 'Nhập số điện thoại hoặc email',

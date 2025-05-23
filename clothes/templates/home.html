@@ -1,3 +1,53 @@
+<<<<<<< HEAD
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .banner {
+            width: 100%;
+            height: 300px;
+            background-image: url("/static/images/banner.jpg");
+            background-size: cover;
+            background-position: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .product {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+        {% for banner in banners %}
+            <a href="{{ banner.link }}">
+                <img src="{{ banner.image.url }}" alt="{{ banner.title }}">
+            </a>
+        {% endfor %}
+    
+    <div class="content">
+        <h1>Sản phẩm mới nhất</h1>
+
+        {% for product in products %}
+        <div class="product">
+            <h2><a href="{% url 'product_detail' product.pk %}">{{ product.name }}</a></h2>
+            <p>Giá: {{ product.price }} VNĐ</p>
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+            {% endif %}
+        </div>
+        {% empty %}
+        <p>Không có sản phẩm nào.</p>
+        {% endfor %}
+
+    </div>
+=======
 <!-- templates/register_info.html -->
 <!DOCTYPE html>
 <html>
@@ -6,5 +56,6 @@
 </head>
 <body>
     <h2>Chào mừng {{ name }} đến với trang chủ!</h2>
+>>>>>>> 3c18fb54c15d929b61ff5fbcf73b371399321851
 </body>
 </html>

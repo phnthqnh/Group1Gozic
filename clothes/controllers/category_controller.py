@@ -59,3 +59,4 @@ class CategoryDetailAPIView(APIView):
         return category_service.delete_category(pk)
        
 
+
