@@ -2,7 +2,7 @@ from django.shortcuts import render , get_object_or_404
 from .models import *
 from .serializers import *
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .form import LoginForm
 from rest_framework.views import APIView
@@ -43,14 +43,18 @@ def login_view(request):
         user = authenticate(request,phone=phone,password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')  
+            return redirect('home')
         else:
             form.add_error(None, "Tài khoản hoặc mật khẩu không đúng.")
     return render(request, 'login.html', {'form': form})
 
-@login_required
+
 def account_view(request):
     return render(request, 'accounts.html',{'user':request.user})
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
 
 def register_phone_view(request):
@@ -86,11 +90,11 @@ def register_info_view(request):
         except Exception as e:
             messages.error(request, str(e))
 
-
         # Đăng nhập ngay sau khi đăng ký
-        # login(request, user)
+        login(request, auth_service.get_user_by_phone(phone))
 
     return render(request, 'register_info.html', {'phone': phone})
+
 
 class RegisterAPI(APIView):
     permission_classes = [AllowAny]
@@ -126,3 +130,19 @@ class LoginAPI(APIView):
             return Response({"error": "Tài khoản hoặc mật khẩu không đúng."}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+from rest_framework.decorators import api_view
+@api_view(['POST'])
+def create_category(request):
+    serializer = CategorySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def create_clothes(request):
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
