@@ -1,6 +1,22 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import *
+from clothes.models import Product, Category
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [ 'id','name']
+
+class ProductSerializer(serializers.ModelSerializer):
+    category_name = serializers.SerializerMethodField()
+    class Meta:
+        model = Product
+        fields = '__all__'
+        
+    def get_category_name(self, obj):
+        return obj.category.name if obj.category else None      
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only = True )
@@ -57,3 +73,4 @@ class LoginSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return validated_data['user']
+

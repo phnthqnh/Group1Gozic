@@ -1,5 +1,7 @@
+from django.shortcuts import render , get_object_or_404
+from .models import *
+from .serializers import *
 from django.shortcuts import render, redirect
-
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .form import LoginForm
@@ -13,7 +15,26 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import AllowAny
 from django.contrib import messages
 
+# Create your views here.
 
+
+def home_view(request):
+    categories = Category.objects.all()
+    products = Product.objects.all()
+    banners = Banner.objects.all()
+    return render(request, 'home.html', {
+        'categories': categories,
+        'products': products,
+        'banners': banners
+    })
+
+def product_detail_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'product_detail.html', {
+        'product': product
+    })
+    
+    
 def login_view(request):
     form = LoginForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -104,3 +125,4 @@ class LoginAPI(APIView):
                 }, status=status.HTTP_200_OK)
             return Response({"error": "Tài khoản hoặc mật khẩu không đúng."}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
