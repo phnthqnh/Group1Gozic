@@ -13,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   String phoneNumber = "";
+  bool hasError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +54,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
 
               SizedBox(height: 50),
-              ButtonWidget(onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.register_2, arguments: phoneNumber);
-                print("phoneNumber: $phoneNumber");
-              }, text: "TIẾP TỤC"),
+              ButtonWidget(
+                onPressed: () {
+                  final phoneRegex = RegExp(r"^(0[3|5|7|8|9])+([0-9]{8})$");
+                  if (!phoneRegex.hasMatch(phoneNumber)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Số điện thoại không hợp lệ"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  } else {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.register_2,
+                      arguments: phoneNumber,
+                    );
+                  }
+                },
+                text: "TIẾP TỤC",
+              ),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/view/screen/DetailScreen.dart';
 import 'package:mobile_app/view/screen/HomeScreen.dart';
 import 'package:mobile_app/view/screen/RegisterScreen_2.dart';
 
@@ -22,13 +23,13 @@ class AppRouter {
           builder: (_) => RegisterScreen_2(phoneNumber: phoneNumber ?? ""),
         );
       case AppRoutes.home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(builder: (_) => HomeScreen());
 
-      // case AppRoutes.productDetail:
-      //   final productId = settings.arguments as String?;
-      //   return MaterialPageRoute(
-      //     builder: (_) => ProductDetailScreen(id: productId),
-      //   );
+      case AppRoutes.productDetail:
+        final productId = settings.arguments as int;
+        return MaterialPageRoute(
+          builder: (_) => DetailScreen(id: productId),
+        );
 
       default: // trang 404 an toàn
         return MaterialPageRoute(

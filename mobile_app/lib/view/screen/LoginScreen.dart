@@ -1,6 +1,8 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:mobile_app/controller/authController/AuthController.dart';
+import 'package:mobile_app/model/request/LoginRequest.dart';
 import 'package:mobile_app/routers/app_routes.dart';
 import 'package:mobile_app/view/widget/ButtonWidget.dart';
 import 'package:mobile_app/view/widget/TextFieldWidget.dart';
@@ -73,8 +75,37 @@ class _LoginScreenState extends State<LoginScreen> {
                 showPassword: true,
                 readOnly: false,
               ),
-              SizedBox(height: 50,),
-              ButtonWidget(onPressed: () {}, text: "ĐĂNG NHẬP"),
+              SizedBox(height: 50),
+              ButtonWidget(
+                onPressed: () async {
+                  final loginModel = LoginRequest(
+                    user_phone: phoneNumber,
+                    password: password,
+                  );
+
+                  final response = await AuthController().login(loginModel);
+
+                  if (response['success'] == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Đăng nhập thành công"),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pushNamed(context, AppRoutes.home);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          response['message'] ?? 'Đăng nhập thất bại',
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                text: "ĐĂNG NHẬP",
+              ),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -88,10 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       "Quên mật khẩu?",
-                      style: TextStyle(
-                        color: Colors.blueAccent,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.blueAccent, fontSize: 16),
                       textAlign: TextAlign.start,
                     ),
                   ),
@@ -102,17 +130,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       "Đăng ký",
-                      style: TextStyle(
-                        color: Colors.blueAccent,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.blueAccent, fontSize: 16),
                       textAlign: TextAlign.start,
                     ),
                   ),
-
                 ],
-              )
-
+              ),
             ],
           ),
         ),

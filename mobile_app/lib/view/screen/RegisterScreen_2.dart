@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/controller/authController/AuthController.dart';
 
+import '../../model/request/RegisterRequest.dart';
 import '../../routers/app_routes.dart';
 import '../widget/ButtonWidget.dart';
 import '../widget/TextFieldWidget.dart';
@@ -71,8 +73,7 @@ class _RegisterScreen_2State extends State<RegisterScreen_2> {
               SizedBox(height: 25),
               TextFieldWidget(
                 label: phoneNumber,
-                onChanged: (value) {
-                },
+                onChanged: (value) {},
                 rightIcon: Icons.phone,
                 showPassword: false,
                 readOnly: true,
@@ -102,15 +103,48 @@ class _RegisterScreen_2State extends State<RegisterScreen_2> {
               TextFieldWidget(
                 label: "Xác nhận mật khẩu",
                 onChanged: (value) {
-                  password = value;
+                  confirmPassword = value;
                 },
                 rightIcon: Icons.lock,
                 showPassword: true,
                 readOnly: false,
               ),
               SizedBox(height: 50),
-              ButtonWidget(onPressed: () {}, text: "Đăng ký"),
+              ButtonWidget(
+                onPressed: () async {
+                  final registerModel = RegisterRequest(
+                    phone: widget.phoneNumber,
+                    password: password,
+                    name: name,
+                    address: address,
+                    confirmPassword: confirmPassword,
+                  );
 
+                  final response = await AuthController().register(
+                    registerModel,
+                  );
+
+                  if (response['success'] == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Đăng ký thành công"),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pushNamed(context, AppRoutes.login);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          response['message'] ?? 'Đăng ký thất bại',
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                text: "Đăng ký",
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

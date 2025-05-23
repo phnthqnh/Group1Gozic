@@ -1,15 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/controller/ProductController.dart';
+import 'package:mobile_app/utils/AppUtils.dart';
 
+import '../../model/response/ProductResponse.dart';
 import '../widget/PromoItem.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({super.key});
+  final int id;
+
+  const DetailScreen({super.key, required this.id});
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  final url = "http://10.0.2.2:8000/api/";
+  final ProductController productController = ProductController();
+  final defaultImage =
+      "https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=";
+  bool _isLoading = true;
+  String? _error;
+  ProductResponse? _product;
+  @override
+  void initState() {
+    super.initState();
+    _fetchProductDetail();
+  }
+
+  void _fetchProductDetail() async {
+    try {
+      final product = await productController.getProductById(widget.id);
+      setState(() {
+        _product = product;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +91,13 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: _isLoading
+        ? Center(child: CircularProgressIndicator())
+          : _error != null
+        ?Center(child: Text("Lỗi: $_error"))
+          :_product == null
+        ?Center(child: Text("Không tìm thấy sản phẩm"))
+          :SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -71,13 +109,21 @@ class _DetailScreenState extends State<DetailScreen> {
                   width: double.infinity,
                   child: PageView(
                     children: [
-                      Image.asset(
-                        'assets/images/product.png',
+                      Image.network(
+                        _product?.image != null && _product!.image.isNotEmpty
+                            ? url + _product!.image
+                            : defaultImage,
+                        width: double.infinity,
+                        height: 150,
                         fit: BoxFit.cover,
-                      ),
-                      Image.asset(
-                        'assets/images/product.png',
-                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.network(
+                            defaultImage,
+                            width: double.infinity,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -86,7 +132,9 @@ class _DetailScreenState extends State<DetailScreen> {
                   top: 40,
                   left: 16,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                     style: ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll<Color>(
                         Colors.black.withOpacity(0.3),
@@ -132,12 +180,14 @@ class _DetailScreenState extends State<DetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'crtop cổ bẻ chữ ngực',
+                    _product!.name,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 4),
                   Text(
-                    '220.000 VND',
+                    AppUtils().formatCurrency(
+                        double.tryParse(_product!.price.toString()) ?? 0
+                    ),
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.orange,
@@ -218,7 +268,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
 
                   Text(
-                    "Crtop cổ bẻ cổ phối màu Hình thêu toàn bộ Chất da cua đẹp ",
+                    _product!.description,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
                   ),
 

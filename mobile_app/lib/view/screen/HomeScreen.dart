@@ -1,15 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/controller/CategoryController.dart';
+import 'package:mobile_app/model/response/CategoryResponse.dart';
+import 'package:mobile_app/model/response/ProductResponse.dart';
+import 'package:mobile_app/view/widget/ProductItem.dart';
 
+import '../../controller/ProductController.dart';
 import '../widget/CategoryItem.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final CategoryController categoryController = CategoryController();
+  final ProductController productController = ProductController();
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  List<CategoryResponse> _categories = [];
+  List<ProductResponse> _products = [];
+  bool _isLoading = true;
+
+  Future<void> _fetchData() async {
+    try {
+      final categories = await widget.categoryController.getListCategory();
+      final products = await widget.productController.getListProduct();
+
+      setState(() {
+        _categories = categories;
+        _products = products;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Lỗi khi lấy dữ liệu: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -107,56 +139,44 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 16),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: const [
-                            CategoryItem(
-                              label: "Đồ Nam",
-                              image: "assets/image/donam.jpg",
-                            ),
-                            CategoryItem(
-                              label: "Đồ Nữ",
-                              image: "assets/image/donu.jpg",
-                            ),
-                            CategoryItem(
-                              label: "Đồ Trẻ Em",
-                              image: "assets/image/dotreem.jpg",
-                            ),
-                            CategoryItem(
-                              label: "Phụ Kiện",
-                              image: "assets/image/phukien.jpg",
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Dành cho bạn",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: SizedBox(
+                          height: 50,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _categories.length,
+                            itemBuilder: (context, index) {
+                              final category = _categories[index];
+                              return CategoryItem(category: category);
+                            },
                           ),
                         ),
                       ),
 
-                      SizedBox(height: 16),
-
-                      // Danh sách sản phẩm gợi ý
+                      const SizedBox(height: 24),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // _ProductItem(image: "assets/product1.png"),
-                            // _ProductItem(image: "assets/product2.png"),
-                            // _ProductItem(image: "assets/product3.png"),
+                            Text(
+                              "Dành cho bạn",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8), // 👈 Điều chỉnh khoảng cách tại đây
+                            GridView.count(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              childAspectRatio: (MediaQuery.of(context).size.width * 0.4) / 230,
+                              children: _products.map((product) {
+                                return ProductItem(product: product);
+                              }).toList(),
+                            ),
                           ],
                         ),
                       ),

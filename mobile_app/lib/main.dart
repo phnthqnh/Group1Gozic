@@ -20,9 +20,9 @@ class GozicTest extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         useMaterial3: true,
       ),
-      home: DetailScreen(),
-      // initialRoute: AppRoutes.login,
-      // onGenerateRoute: AppRouter.generateRoute,
+      // home: HomeScreen(),
+      initialRoute: AppRoutes.login,
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }
